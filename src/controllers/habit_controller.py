@@ -2,6 +2,7 @@ from flask import Blueprint, abort, jsonify, request
 from schemas.UserSchema import user_schema
 from schemas.HabitSchema import habit_schema, habits_schema
 from models.User import User
+from models.Customer import Customer
 from models.Habit import Habit
 from main import db, bcrypt
 from flask_jwt_extended import create_access_token
@@ -29,6 +30,9 @@ def new_account():
     new_habit.customer_id = habit_fields["customer_id"]
 
     user.habit_id.append(new_habit)
+
+    customer = Customer.query.filter_by(customer_of=user.id, id = new_habit.customer_id).first()
+    customer.habits.append(new_habit)
         
     db.session.add(new_habit)
     db.session.commit()
