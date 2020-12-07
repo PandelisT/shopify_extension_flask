@@ -9,6 +9,8 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
     email = ma.String(required=True, validate=[Length(min=4), Email()])
     password = ma.String(required=True, validate=Length(min=6))
+    tag_id =  ma.Nested("TagSchema", many=True)
+    habit_id = ma.Nested("HabitSchema", many=True)
 
 
 user_schema = UserSchema()

@@ -1,5 +1,5 @@
 from flask import Blueprint, abort, jsonify, request
-from schemas.CustomerSchema import customer_schema
+from schemas.CustomerSchema import customer_schema, customers_schema
 from models.Customer import Customer
 from models.User import User
 from main import db, bcrypt
@@ -35,3 +35,14 @@ def new_account():
     db.session.commit()
         
     return jsonify(customer_schema.dump(new_customer))
+
+@customer.route("/<int:user_id>", methods=["GET"])
+@jwt_required
+def get_customers_for_user(user_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+
+    all_customers = Customer.query.filter_by(customer_of=user.id).all()
+    return jsonify(customers_schema.dump(all_customers))

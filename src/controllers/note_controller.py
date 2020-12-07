@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, jsonify, request
 from schemas.UserSchema import user_schema
-from schemas.NoteSchema import note_schema, notes_schema
 from schemas.CustomerSchema import customer_schema
+from schemas.NoteSchema import note_schema, notes_schema
 from models.User import User
 from models.Customer import Customer
 from models.Note import Note
@@ -28,6 +28,7 @@ def new_account():
     new_note = Note()
     new_note.note = note_fields["note"]
     new_note.comms_type = note_fields["comms_type"]
+    new_note.customer_id = note_fields["customer_id"]
 
     user.note_id.append(new_note)
         

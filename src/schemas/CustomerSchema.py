@@ -7,5 +7,8 @@ class CustomerSchema(ma.SQLAlchemyAutoSchema):
         model = Customer
 
     email = ma.String(required=True, validate=[Length(min=4), Email()])
+    habits = ma.Nested("HabitSchema", many=True)
+    tags = ma.Nested("TagSchema", many=True)
 
 customer_schema = CustomerSchema()
+customers_schema = CustomerSchema(many=True)
