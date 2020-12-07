@@ -36,13 +36,24 @@ def new_account():
         
     return jsonify(customer_schema.dump(new_customer))
 
-@customer.route("/<int:user_id>", methods=["GET"])
+@customer.route("/", methods=["GET"])
 @jwt_required
-def get_customers_for_user(user_id):
+def get_customers_for_user():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
 
-    all_customers = Customer.query.filter_by(customer_of=user.id).all()
+    all_customers = Customer.query.filter_by(customer_of=user.id)
+    return jsonify(customers_schema.dump(all_customers))
+
+@customer.route("/<int:customer_id>", methods=["GET"])
+@jwt_required
+def get_customer(customer_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+
+    all_customers = Customer.query.filter_by(customer_of=user.id, id = customer_id)
     return jsonify(customers_schema.dump(all_customers))

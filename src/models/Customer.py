@@ -18,5 +18,6 @@ class Customer(db.Model):
     habits = relationship("Habit", secondary=customers_habits, back_populates="customers")
     tags = relationship("Tag", secondary=customers_tags, back_populates="customers")
 
+
     def __repr__(self):
         return f"<Customer {self.fname} {self.lname}>"
