@@ -15,7 +15,7 @@ class Customer(db.Model):
     is_active = db.Column(db.Boolean(), default=True)
     email = db.Column(db.String, nullable=False)
     customer_of = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    habits = relationship("Habit", secondary=customers_habits, back_populates="customers")
+    habits = relationship("Habit", secondary=customers_habits, back_populates="customers", uselist=True)
     tags = relationship("Tag", secondary=customers_tags, back_populates="customers")
 
 

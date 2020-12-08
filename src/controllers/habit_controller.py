@@ -17,7 +17,8 @@ habit = Blueprint("habit", __name__, url_prefix="/habit")
 
 @habit.route("/", methods=["POST"])
 @jwt_required
-def new_account():
+def new_habit():
+    # Adds a new habit to the database
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -27,17 +28,32 @@ def new_account():
     
     new_habit = Habit()
     new_habit.habit = habit_fields["habit"]
-    new_habit.customer_id = habit_fields["customer_id"]
 
     user.habit_id.append(new_habit)
-
-    customer = Customer.query.filter_by(customer_of=user.id, id = new_habit.customer_id).first()
-    customer.habits.append(new_habit)
         
     db.session.add(new_habit)
     db.session.commit()
         
     return jsonify(habit_schema.dump(new_habit))
+
+@habit.route("/customer/<int:customer_id>/habit/<int:habit_id>", methods=["POST"])
+@jwt_required
+def new_habit_customer(customer_id, habit_id):
+    # Adds a habit to a customer
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    customer = Customer.query.filter_by(customer_of=user.id, id = customer_id).first()
+    habit = Habit.query.filter_by(id = habit_id).first()
+    print(habit.habit)
+    customer.habits.append(habit)
+        
+    db.session.add(habit)
+    db.session.commit()
+        
+    return jsonify(habit_schema.dump(habit))
 
 
 @habit.route("/", methods=["GET"])
