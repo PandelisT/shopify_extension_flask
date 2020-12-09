@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 from models.CustomersHabits import customers_habits 
 from models.CustomersTags import customers_tags 
+from models.Order import Order
 
 class Customer(db.Model):
     __tablename__ = "customers"
@@ -16,7 +17,8 @@ class Customer(db.Model):
     email = db.Column(db.String, nullable=False)
     customer_of = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     habits = relationship("Habit", secondary=customers_habits, back_populates="customers", uselist=True)
-    tags = relationship("Tag", secondary=customers_tags, back_populates="customers")
+    tags = relationship("Tag", secondary=customers_tags, back_populates="customers", uselist=True)
+    orders = db.relationship(Order, lazy="dynamic", uselist=True)
 
 
     def __repr__(self):

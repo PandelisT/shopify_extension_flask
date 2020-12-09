@@ -12,12 +12,12 @@ from datetime import timedelta
 from sqlalchemy import text
 
 
-order = Blueprint("order", __name__, url_prefix="/order")
+order = Blueprint("order", __name__, url_prefix="/order/customer/<int:customer_id>")
 
 
 @order.route("/", methods=["POST"])
 @jwt_required
-def new_order():
+def new_order(customer_id):
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -25,16 +25,17 @@ def new_order():
     
     order_fields = order_schema.load(request.json)
     
-    new_order = Habit()
-    new_order.habit = habit_fields["habit"]
-    new_order.customer_id = habit_fields["customer_id"]
+    new_order = Order()
+    new_order.product = order_fields["product"]
+    new_order.customer_id = customer_id
 
-    user.habit_id.append(new_habit)
-
-    customer = Customer.query.filter_by(customer_of=user.id, id = new_habit.customer_id).first()
-    customer.habits.append(new_habit)
+    user.order_id.append(new_order)
+    
+    customer = Customer.query.filter_by(customer_of=user.id, id = customer_id).first()
+    
+    customer.orders.append(new_order)
         
-    db.session.add(new_habit)
+    db.session.add(new_order)
     db.session.commit()
         
-    return jsonify(habit_schema.dump(new_habit))
+    return jsonify(order_schema.dump(new_order))

@@ -3,6 +3,9 @@ from controllers.customer_controller import customer
 from controllers.note_controller import note
 from controllers.tag_controller import tag
 from controllers.habit_controller import habit
+from controllers.order_controller import order
+from controllers.product_controller import product
+from controllers.article_controller import article
 
 
 registerable_controllers = [
@@ -10,5 +13,8 @@ registerable_controllers = [
     customer,
     note,
     tag,
-    habit
+    habit,
+    order,
+    product,
+    article
 ]

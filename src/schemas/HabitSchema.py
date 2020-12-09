@@ -1,6 +1,5 @@
 from main import ma
 from models.Habit import Habit
-from marshmallow.validate import Length, Email
 
 class HabitSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
