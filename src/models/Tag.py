@@ -11,7 +11,6 @@ class Tag(db.Model):
     tag = db.Column(db.String(), nullable=False)
     created_at = db.Column(db.DateTime(), nullable=False, default = datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    customer_id = db.Column(db.Integer, nullable=False)
     customers = db.relationship("Customer", secondary=customers_tags, back_populates="tags")
 
     def __repr__(self):

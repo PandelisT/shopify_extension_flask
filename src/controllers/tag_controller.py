@@ -17,7 +17,8 @@ tag = Blueprint("tag", __name__, url_prefix="/tag")
 
 @tag.route("/", methods=["POST"])
 @jwt_required
-def new_account():
+def new_tag():
+    # Adds a new tag to the database
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -27,7 +28,6 @@ def new_account():
     
     new_tag = Tag()
     new_tag.tag = tag_fields["tag"]
-    new_tag.customer_id = tag_fields["customer_id"]
 
     user.tag_id.append(new_tag)
         
@@ -35,3 +35,21 @@ def new_account():
     db.session.commit()
         
     return jsonify(tag_schema.dump(new_tag))
+
+@tag.route("/customer/<int:customer_id>/tag_id/<int:tag_id>", methods=["POST"])
+@jwt_required
+def new_tag_customer(customer_id, tag_id):
+    # Adds a tag to a customer
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    customer = Customer.query.filter_by(customer_of=user.id, id = customer_id).first()
+    tag = Tag.query.filter_by(id = tag_id).first()
+    customer.tags.append(tag)
+        
+    db.session.add(tag)
+    db.session.commit()
+        
+    return jsonify(tag_schema.dump(tag))

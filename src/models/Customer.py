@@ -18,7 +18,8 @@ class Customer(db.Model):
     customer_of = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     habits = relationship("Habit", secondary=customers_habits, back_populates="customers", uselist=True)
     tags = relationship("Tag", secondary=customers_tags, back_populates="customers", uselist=True)
-    orders = db.relationship(Order, lazy="dynamic", uselist=True)
+    orders = relationship("Order", backref="customer")
+    notes = relationship("Note", backref="customer")
 
 
     def __repr__(self):

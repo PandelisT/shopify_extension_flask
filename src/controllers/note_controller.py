@@ -15,9 +15,9 @@ from datetime import timedelta
 note = Blueprint("note", __name__, url_prefix="/note")
 
 
-@note.route("/", methods=["POST"])
+@note.route("/customer/<int:customer_id>", methods=["POST"])
 @jwt_required
-def new_account():
+def new_note(customer_id):
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -28,7 +28,7 @@ def new_account():
     new_note = Note()
     new_note.note = note_fields["note"]
     new_note.comms_type = note_fields["comms_type"]
-    new_note.customer_id = note_fields["customer_id"]
+    new_note.customer_id = customer_id
 
     user.note_id.append(new_note)
         
