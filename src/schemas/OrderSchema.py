@@ -5,7 +5,7 @@ class OrderSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Order
     
-    # customer = ma.Nested("CustomerSchema", many=True)
+    products = ma.Nested("ProductSchema", many=True)
 
 
 order_schema = OrderSchema()

@@ -15,7 +15,7 @@ class Product(db.Model):
     created_on = db.Column(db.DateTime(), nullable=False, default = datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     no_of_articles = db.Column(db.Integer)
-    # orders = relationship("Order", secondary=orders_products, back_populates="orders")
+    product_orders = db.relationship("Order", secondary=orders_products, back_populates="products", uselist=True)
 
 
     def __repr__(self):
