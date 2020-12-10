@@ -6,6 +6,7 @@ from controllers.habit_controller import habit
 from controllers.order_controller import order
 from controllers.product_controller import product
 from controllers.article_controller import article
+from controllers.address_controller import address
 
 
 registerable_controllers = [
@@ -16,5 +17,6 @@ registerable_controllers = [
     habit,
     order,
     product,
-    article
+    article,
+    address
 ]

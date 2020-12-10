@@ -11,6 +11,7 @@ class CustomerSchema(ma.SQLAlchemyAutoSchema):
     tags = ma.Nested("TagSchema", many=True)
     notes = ma.Nested("NoteSchema", many=True)
     orders = ma.Nested("OrderSchema", many=True)
+    address = ma.Nested("AddressSchema")
 
 customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)
