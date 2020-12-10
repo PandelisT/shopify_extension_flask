@@ -21,10 +21,6 @@ class Product(db.Model):
     product_orders = db.relationship("Order", secondary=orders_products, back_populates="products", uselist=True)
 
     @classmethod
-    def article_count(cls):
-        return db.engine.execute('select count(id) from products_articles where product_id = id').scalar()
-
-    @classmethod
     def article_filter_count(cls, product_id):
         sql_query = text("SELECT count(id) FROM WHERE product_id=':product_id';")
         return db.engine.execute(sql_query, {"customer_id": customer_id, "user_id": user_id})
