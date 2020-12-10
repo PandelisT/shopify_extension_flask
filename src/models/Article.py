@@ -1,6 +1,7 @@
 from main import db
 from datetime import datetime 
 from sqlalchemy.orm import relationship
+from models.ProductsArticles import products_articles
 
 
 class Article(db.Model):
@@ -16,6 +17,7 @@ class Article(db.Model):
     custom_post_type = db.Column(db.String)
     show_date_and_author = db.Column(db.Boolean, default=True)
     show_summary = db.Column(db.Boolean, default=True)
+    articles = db.relationship("Product", secondary=products_articles, back_populates="articles", uselist=True)
 
 
     def __repr__(self):

@@ -6,6 +6,7 @@ class ProductSchema(ma.SQLAlchemyAutoSchema):
         model = Product
     
     orders = ma.Nested("OrderSchema", many=True)
+    articles = ma.Nested("ArticleSchema", many=True)
 
 
 product_schema = ProductSchema()

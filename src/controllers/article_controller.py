@@ -45,3 +45,22 @@ def new_article():
     db.session.commit()
         
     return jsonify(article_schema.dump(new_article))
+
+
+@article.route("/product/<int:product_id>/article_id/<int:article_id>", methods=["POST"])
+@jwt_required
+def new_article_product(product_id, article_id):
+    # Adds a product to a article
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    product = Product.query.filter_by(id = product_id).first()
+    article = Article.query.filter_by(id = article_id).first()
+    article.articles.append(product)
+        
+    db.session.add(product)
+    db.session.commit()
+        
+    return jsonify(product_schema.dump(product))
