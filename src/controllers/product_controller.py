@@ -131,6 +131,37 @@ def get_all_products():
         
     return jsonify(products_schema.dump(products))
 
+@product.route("/product_date", methods=["GET"])
+@jwt_required
+def get_all_products_by_date():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    products = Product.query.filter_by(user_id = user.id).order_by(Product.created_on.desc()).all()
+        
+    return jsonify(products_schema.dump(products))
+
+@product.route("/product_price", methods=["GET"])
+@jwt_required
+def get_total_products_price():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    products = db.session.query(Product, Product.price, Product.id).group_by(Product.id).all() 
+    print(products)
+    
+    sum = 0
+    for product in products:
+        sum = sum + product[1]
+        
+    return jsonify({ "sum of all products" :sum })
+
+    # jsonify(products_schema.dump(products))
+
 @product.route("/<int:product_id>", methods=["DELETE"])
 @jwt_required
 def delete_product(product_id):
