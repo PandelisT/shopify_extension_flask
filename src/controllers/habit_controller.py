@@ -58,7 +58,7 @@ def new_habit_customer(customer_id, habit_id):
 
 @habit.route("/", methods=["GET"])
 @jwt_required
-def get_user_checklists():
+def get_habits():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -69,9 +69,9 @@ def get_user_checklists():
     return jsonify(habits_schema.dump(habits))
 
 
-@habit.route("/<int:customer_id>", methods=["GET"])
+@habit.route("/customer/<int:customer_id>", methods=["GET"])
 @jwt_required
-def checklist_get(customer_id):
+def get_habits_for_customer(customer_id):
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -89,10 +89,33 @@ def checklist_get(customer_id):
 
 @habit.route("/<int:habit_id>", methods=["DELETE"])
 @jwt_required
-def delete_habit():
-    pass
+def delete_habit(habit_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    habit = Habit.query.filter_by(id = habit_id).first()
+
+    db.session.delete(habit)
+    db.session.commit()
+
+    return jsonify("The following habit was deleted from the database.", habit_schema.dump(habit))
 
 @habit.route("/<int:habit_id>", methods=["PUT"])
 @jwt_required
-def update_habit():
-    pass
+def update_habit(habit_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    habit_fields = habit_schema.load(request.json)
+    
+    habit = Habit.query.filter_by(id = habit_id)
+    habit.habit = habit_fields["habit"]
+
+    habit.update(habit_fields)
+    db.session.commit()
+        
+    return jsonify(habit_schema.dump(habit))

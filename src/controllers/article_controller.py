@@ -68,7 +68,7 @@ def update_article(article_id):
     
     article_fields = article_schema.load(request.json)
     
-    article = Article.query.filter_by(id = article_id).first()
+    article = Article.query.filter_by(id = article_id)
     article.title = article_fields["title"]
     article.body_html = article_fields["body_html"]
     article.summary = article_fields["summary"]
@@ -77,6 +77,7 @@ def update_article(article_id):
     article.show_date_and_author = article_fields["show_date_and_author"]
     article.show_summary = article_fields["show_summary"]
 
+    article.update(article_fields)
     db.session.commit()
         
     return jsonify(article_schema.dump(article))

@@ -65,7 +65,7 @@ def add_product_to_order(product_id, order_id):
 
 @product.route("/<int:product_id>/order/<int:order_id>", methods=["DELETE"])
 @jwt_required
-def delet_product_from_order(product_id, order_id):
+def delete_product_from_order(product_id, order_id):
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:

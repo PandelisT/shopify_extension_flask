@@ -40,30 +40,84 @@ def new_note(customer_id):
 
 @note.route("/<int:note_id>", methods=["GET"])
 @jwt_required
-def get_note():
-    pass
+def get_note(note_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    note = Note.query.filter_by(id = note_id).first()
+        
+    return jsonify(note_schema.dump(note))
 
 @note.route("/<int:note_id>/customer/<int:customer_id>", methods=["GET"])
 @jwt_required
-def get_note_for_customer():
-    pass
+def get_note_for_customer(note_id, customer_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    note = Note.query.filter_by(id = note_id, customer_id = customer_id).first()
+        
+    return jsonify(note_schema.dump(note))
 
 @note.route("/", methods=["GET"])
 @jwt_required
 def get_all_notes_for_user():
-    pass
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    notes = Note.query.filter_by(user_id = user.id).all()
+
+    return jsonify(notes_schema.dump(notes))
 
 @note.route("/customer/<int:customer_id>", methods=["GET"])
 @jwt_required
-def get_all_notes_for_customer():
-    pass
+def get_all_notes_for_customer(customer_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    notes = Note.query.filter_by(customer_id = customer_id).all()
+        
+    return jsonify(notes_schema.dump(notes))
+
 
 @note.route("/<int:note_id>", methods=["DELETE"])
 @jwt_required
-def delete_note():
-    pass
+def delete_note(note_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    note = Note.query.filter_by(id = note_id).first()
+
+    db.session.delete(note)
+    db.session.commit()
+        
+    return jsonify(note_schema.dump(note))
 
 @note.route("/<int:note_id>", methods=["PUT"])
 @jwt_required
-def update_note():
-    pass
+def update_note(note_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    note_fields = note_schema.load(request.json)
+    
+    note = Note.query.filter_by(id = note_id)
+    note.note = note_fields["note"]
+    note.comms_type = note_fields["comms_type"]
+
+        
+    note.update(note_fields)
+    db.session.commit()
+        
+    return jsonify(note_schema.dump(note))

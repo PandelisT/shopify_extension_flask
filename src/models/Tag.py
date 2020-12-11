@@ -2,6 +2,7 @@ from main import db
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from models.CustomersTags import customers_tags
+from sqlalchemy import text
 
 
 class Tag(db.Model):
@@ -13,5 +14,11 @@ class Tag(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     customers = db.relationship("Customer", secondary=customers_tags, back_populates="tags")
 
+
+    @classmethod
+    def tag_filter(cls, customer_id):
+        sql_query = text("SELECT * FROM  customers_tags WHERE customer_id = ':customer_id';")
+        return db.engine.execute(sql_query, {"customer_id": customer_id})
+
     def __repr__(self):
-        return f"<Note {self.id}>"
+        return f"<Tag {self.id}>"
