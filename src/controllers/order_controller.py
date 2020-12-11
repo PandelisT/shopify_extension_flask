@@ -12,10 +12,10 @@ from datetime import timedelta
 from sqlalchemy import text
 
 
-order = Blueprint("order", __name__, url_prefix="/order/customer/<int:customer_id>")
+order = Blueprint("order", __name__, url_prefix="/order")
 
 
-@order.route("/", methods=["POST"])
+@order.route("/customer/<int:customer_id>", methods=["POST"])
 @jwt_required
 def new_order(customer_id):
     user_id = get_jwt_identity()
@@ -23,10 +23,10 @@ def new_order(customer_id):
     if not user:
         return abort(401, description="Invalid user")
     
-    order_fields = order_schema.load(request.json)
+    # order_fields = order_schema.load(request.json)
     
     new_order = Order()
-    new_order.product = order_fields["product"]
+    # new_order.product = order_fields["product"]
     new_order.customer_id = customer_id
 
     user.order_id.append(new_order)

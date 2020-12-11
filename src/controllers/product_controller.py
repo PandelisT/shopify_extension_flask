@@ -152,7 +152,6 @@ def get_total_products_price():
         return abort(401, description="Invalid user")
     
     products = db.session.query(Product, Product.price, Product.id).group_by(Product.id).all() 
-    print(products)
     
     sum = 0
     for product in products:
@@ -160,7 +159,23 @@ def get_total_products_price():
         
     return jsonify({ "sum of all products" :sum })
 
-    # jsonify(products_schema.dump(products))
+
+@product.route("/product_price_information", methods=["GET"])
+@jwt_required
+def get_product_price_information():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    max_price_of_product = db.session.query(func.max(Product.price)).scalar()
+    average_price_of_product = round(db.session.query(func.avg(Product.price)).scalar())
+    sum_price_of_product = db.session.query(func.sum(Product.price)).scalar()
+
+    return jsonify({"Maximum price of all products is" : max_price_of_product, 
+            "Average price of all products is" : average_price_of_product,
+            "Sum of all products prices is" : sum_price_of_product})
+
 
 @product.route("/<int:product_id>", methods=["DELETE"])
 @jwt_required

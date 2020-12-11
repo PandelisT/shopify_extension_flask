@@ -40,11 +40,46 @@ def new_article():
 
     user.article_id.append(new_article)
 
-
     db.session.add(new_article)
     db.session.commit()
         
     return jsonify(article_schema.dump(new_article))
+
+
+@article.route("/<int:article_id>", methods=["GET"])
+@jwt_required
+def get_article(article_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    article = Article.query.filter_by(id = article_id).first()
+        
+    return jsonify(article_schema.dump(article))
+
+@article.route("/<int:article_id>", methods=["PUT"])
+@jwt_required
+def update_article(article_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    article_fields = article_schema.load(request.json)
+    
+    article = Article.query.filter_by(id = article_id).first()
+    article.title = article_fields["title"]
+    article.body_html = article_fields["body_html"]
+    article.summary = article_fields["summary"]
+    article.allow_comments = article_fields["allow_comments"]
+    article.custom_post_type = article_fields["custom_post_type"]
+    article.show_date_and_author = article_fields["show_date_and_author"]
+    article.show_summary = article_fields["show_summary"]
+
+    db.session.commit()
+        
+    return jsonify(article_schema.dump(article))
 
 
 @article.route("/product/<int:product_id>/article_id/<int:article_id>", methods=["POST"])
@@ -64,3 +99,19 @@ def new_article_product(product_id, article_id):
     db.session.commit()
         
     return jsonify(product_schema.dump(product))
+
+
+@article.route("/<int:article_id>", methods=["DELETE"])
+@jwt_required
+def delete_article(article_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    article = Article.query.filter_by(id = article_id).first()
+
+    db.session.delete(article)
+    db.session.commit()
+
+    return jsonify("The following article was deleted from the database.", article_schema.dump(article))
