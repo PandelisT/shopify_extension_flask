@@ -4,6 +4,7 @@ from schemas.HabitSchema import habit_schema, habits_schema
 from models.User import User
 from models.Customer import Customer
 from models.Habit import Habit
+from models.CustomersHabits import customers_habits
 from main import db, bcrypt
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
@@ -47,7 +48,6 @@ def new_habit_customer(customer_id, habit_id):
     
     customer = Customer.query.filter_by(customer_of=user.id, id = customer_id).first()
     habit = Habit.query.filter_by(id = habit_id).first()
-    print(habit.habit)
     customer.habits.append(habit)
         
     db.session.add(habit)
@@ -66,6 +66,9 @@ def get_habits():
 
     habits = [Habit.query.get(habit.id) for habit in user.habit_id]
 
+    if habits == []:
+        return "No habits for this user"
+
     return jsonify(habits_schema.dump(habits))
 
 
@@ -77,14 +80,12 @@ def get_habits_for_customer(customer_id):
     if not user:
         return abort(401, description="Invalid user")
 
-    result = Habit.habit_filter(customer_id, user.id)
-    result_as_list = result.fetchall()
+    habits = db.session.query(Habit).filter(customers_habits.c.customer_id == customer_id).all()
 
-    habit_list = []
-    for habit in result_as_list:
-        habit_list.append({"id": habit.id, "habit": habit.habit})
+    if habits == []:
+        return "No habits for this customer"
 
-    return jsonify(habit_list)
+    return jsonify(habits_schema.dump(habits))
 
 
 @habit.route("/<int:habit_id>", methods=["DELETE"])
