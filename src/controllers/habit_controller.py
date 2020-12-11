@@ -30,6 +30,9 @@ def new_habit():
     new_habit = Habit()
     new_habit.habit = habit_fields["habit"]
 
+    if new_habit.habit == None:
+        return abort(400, "Need to add habit field")
+
     user.habit_id.append(new_habit)
         
     db.session.add(new_habit)
@@ -48,6 +51,10 @@ def new_habit_customer(customer_id, habit_id):
     
     customer = Customer.query.filter_by(customer_of=user.id, id = customer_id).first()
     habit = Habit.query.filter_by(id = habit_id).first()
+
+    if not customer or not habit:
+        return abort(404, "Customer or habit not found")
+
     customer.habits.append(habit)
         
     db.session.add(habit)
@@ -98,6 +105,9 @@ def delete_habit(habit_id):
     
     habit = Habit.query.filter_by(id = habit_id).first()
 
+    if not habit:
+        return abort(404, description="Habit not found.")
+
     db.session.delete(habit)
     db.session.commit()
 
@@ -114,6 +124,11 @@ def update_habit(habit_id):
     habit_fields = habit_schema.load(request.json)
     
     habit = Habit.query.filter_by(id = habit_id)
+    print(habit)
+
+    if habit.count() != 1:
+        return abort(404, description="Habit not found.")
+
     habit.habit = habit_fields["habit"]
 
     habit.update(habit_fields)
