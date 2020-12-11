@@ -36,3 +36,34 @@ def new_note(customer_id):
     db.session.commit()
         
     return jsonify(note_schema.dump(new_note))
+
+
+@note.route("/<int:note_id>", methods=["GET"])
+@jwt_required
+def get_note():
+    pass
+
+@note.route("/<int:note_id>/customer/<int:customer_id>", methods=["GET"])
+@jwt_required
+def get_note_for_customer():
+    pass
+
+@note.route("/", methods=["GET"])
+@jwt_required
+def get_all_notes_for_user():
+    pass
+
+@note.route("/customer/<int:customer_id>", methods=["GET"])
+@jwt_required
+def get_all_notes_for_customer():
+    pass
+
+@note.route("/<int:note_id>", methods=["DELETE"])
+@jwt_required
+def delete_note():
+    pass
+
+@note.route("/<int:note_id>", methods=["PUT"])
+@jwt_required
+def update_note():
+    pass

@@ -53,9 +53,6 @@ def add_product_to_order(product_id, order_id):
     product = Product.query.filter_by(id = product_id).first()
     order = Order.query.filter_by(id = order_id).first()
 
-    print(product)
-    print(order)
-
     if not product  or not order:
         return abort(403, description="Incorrect product or order")
 
@@ -65,6 +62,25 @@ def add_product_to_order(product_id, order_id):
     db.session.commit()
         
     return jsonify(product_schema.dump(product))
+
+@product.route("/<int:product_id>/order/<int:order_id>", methods=["DELETE"])
+@jwt_required
+def delet_product_from_order(product_id, order_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    product = Product.query.filter_by(id = product_id).first()
+    order = Order.query.filter_by(id = order_id).first()
+
+    if not product  or not order:
+        return abort(403, description="Incorrect product or order")
+        
+    db.session.delete(product)
+    db.session.commit()
+        
+    return jsonify("The following product was deleted from the order specified", product_schema.dump(product))
 
 @product.route("/no_of_articles/<int:product_id>", methods=["PUT"])
 @jwt_required
@@ -90,17 +106,15 @@ def update_product(product_id):
     if not user:
         return abort(401, description="Invalid user")
     
-    update_product = Product.query.filter_by(id = product_id).first()
     product_fields = product_schema.load(request.json)
+    update_product = Product.query.filter_by(id = product_id)
     
     update_product.title = product_fields["title"]
     update_product.description = product_fields["description"]
     update_product.quantity = product_fields["quantity"]
     update_product.price = product_fields["price"]
 
-    user.product_id.append(update_product)
-    
-    db.session.add(update_product)
+    update_product.update(product_fields)
     db.session.commit()
         
     return jsonify(product_schema.dump(update_product))
@@ -127,7 +141,6 @@ def get_all_products():
         return abort(401, description="Invalid user")
     
     products = Product.query.filter_by(user_id = user.id).all()
-    print(products)
         
     return jsonify(products_schema.dump(products))
 

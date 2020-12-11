@@ -47,3 +47,30 @@ def new_address_for_customer(customer_id):
     db.session.commit()
         
     return jsonify(address_schema.dump(new_address))
+
+@address.route("/<int:address_id>", methods=["GET"])
+@jwt_required
+def get_address(address_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+
+    address = Address.query.filter_by(id = address_id).first()
+
+    return jsonify(address_schema.dump(address))
+
+@address.route("/<int:address_id>", methods=["DELETE"])
+@jwt_required
+def delete_address(address_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    address = Address.query.filter_by(id = address_id).first()
+
+    db.session.delete(address)
+    db.session.commit()
+
+    return jsonify("The following address was deleted from the database.", address_schema.dump(address))

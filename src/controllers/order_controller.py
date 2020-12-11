@@ -22,11 +22,8 @@ def new_order(customer_id):
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
-    
-    # order_fields = order_schema.load(request.json)
-    
+      
     new_order = Order()
-    # new_order.product = order_fields["product"]
     new_order.customer_id = customer_id
 
     user.order_id.append(new_order)
@@ -39,3 +36,43 @@ def new_order(customer_id):
     db.session.commit()
         
     return jsonify(order_schema.dump(new_order))
+
+@order.route("/<int:order_id>", methods=["DELETE"])
+@jwt_required
+def delete_order(order_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    order = Order.query.filter_by(id = order_id).first()
+
+    db.session.delete(order)
+    db.session.commit()
+
+    return jsonify("The following order was deleted from the database.", order_schema.dump(order))
+
+
+@order.route("/<int:order_id>", methods=["GET"])
+@jwt_required
+def get_order(order_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    order = Order.query.filter_by(id = order_id).first()
+
+    return jsonify(order_schema.dump(order))
+
+@order.route("/", methods=["GET"])
+@jwt_required
+def get_all_orders():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    orders = Order.query.filter_by(customer_of = user.id).all()
+
+    return jsonify(orders_schema.dump(orders))

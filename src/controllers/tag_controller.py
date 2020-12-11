@@ -53,3 +53,28 @@ def new_tag_customer(customer_id, tag_id):
     db.session.commit()
         
     return jsonify(tag_schema.dump(tag))
+
+@tag.route("/<int:tag_id>", methods=["GET"])
+@jwt_required
+def get_tag():
+    pass
+
+@tag.route("/<int:tag_id>/customer/<int:customer_id>", methods=["GET"])
+@jwt_required
+def get_tag_for_customer():
+    pass
+
+@tag.route("/", methods=["GET"])
+@jwt_required
+def get_all_tags_for_user():
+    pass
+
+@tag.route("/<int:tag_id>", methods=["DELETE"])
+@jwt_required
+def delete_tag():
+    pass
+
+@tag.route("/<int:tag_id>", methods=["PUT"])
+@jwt_required
+def update_tag():
+    pass

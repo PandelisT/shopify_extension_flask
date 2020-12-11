@@ -85,3 +85,14 @@ def checklist_get(customer_id):
         habit_list.append({"id": habit.id, "habit": habit.habit})
 
     return jsonify(habit_list)
+
+
+@habit.route("/<int:habit_id>", methods=["DELETE"])
+@jwt_required
+def delete_habit():
+    pass
+
+@habit.route("/<int:habit_id>", methods=["PUT"])
+@jwt_required
+def update_habit():
+    pass

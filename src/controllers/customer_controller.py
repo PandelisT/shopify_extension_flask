@@ -15,7 +15,7 @@ customer = Blueprint("customer", __name__, url_prefix="/customer")
 
 @customer.route("/", methods=["POST"])
 @jwt_required
-def new_account():
+def new_customer():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -55,25 +55,42 @@ def get_customer(customer_id):
     if not user:
         return abort(401, description="Invalid user")
 
-    all_customers = Customer.query.filter_by(customer_of=user.id, id = customer_id)
-    return jsonify(customers_schema.dump(all_customers))
+    customer = Customer.query.filter_by(customer_of=user.id, id = customer_id)
+    return jsonify(customers_schema.dump(customer))
+
+@customer.route("/<int:customer_id>", methods=["DELETE"])
+@jwt_required
+def delete_customer(customer_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+
+    customer = Customer.query.filter_by(customer_of=user.id, id = customer_id).first()
+
+    db.session.delete(customer)
+    db.session.commit()
+
+    return jsonify("The following customer was deleted from the database.", customer_schema.dump(customer))
 
 
-# @customer.route("/address/<int:customer_id>", methods=["PUT"])
-# @jwt_required
-# def update_customer_address(customer_id):
-#     user_id = get_jwt_identity()
-#     user = User.query.get(user_id)
-#     if not user:
-#         return abort(401, description="Invalid user")
+@customer.route("/<int:customer_id>", methods=["PUT"])
+@jwt_required
+def update_customer(customer_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
     
-#     update_address = Address.query.filter_by(customer_id = customer_id).first()
-#     print(update_address)
-#     customer = Customer.query.filter_by(id = customer_id).first()
-#     print(customer)
+    customer_fields = customer_schema.load(request.json)
+    customer = Customer.query.filter_by(customer_of=user.id, id = customer_id)
 
-#     customer.addresses = update_address
-#     db.session.add(update_address)
-#     db.session.commit()
+    customer.fname = customer_fields["fname"]
+    customer.lname = customer_fields["lname"]
+    customer.email = customer_fields["email"]
+    customer.is_active= customer_fields["is_active"]
+
+    customer.update(customer_fields)
+    db.session.commit()
         
-#     return jsonify(customer_schema.dump(update_address))
+    return jsonify(customer_schema.dump(customer))
