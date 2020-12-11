@@ -2,7 +2,7 @@ from main import db
 from datetime import datetime 
 from sqlalchemy.orm import relationship
 from models.CustomersHabits import customers_habits 
-from models.CustomersTags import customers_tags 
+from models.CustomersTags import customers_tags
 from models.Order import Order
 from models.Address import Address
 

@@ -76,17 +76,9 @@ def get_tags_for_customer(customer_id):
     if not user:
         return abort(401, description="Invalid user")
     
-    result = Tag.tag_filter(customer_id)
-    result_as_list = result.fetchall()
+    tags = db.session.query(Tag).filter(customers_tags.c.customer_id == customer_id).all()
 
-    tag_list = []
-    for tag in result_as_list:
-        tag_id = tag[1]
-        tag_list.append(tag_id)
-
-    # tags = db.session.query(Tag).join(customers_tags).filter(customers_tags.customer_id == customer_id).all()
-
-    return jsonify(tags_schema.dump(tag_list))
+    return jsonify(tags_schema.dump(tags))
 
 @tag.route("/", methods=["GET"])
 @jwt_required
