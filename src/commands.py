@@ -1,5 +1,6 @@
 from main import db
 from flask import Blueprint
+import os
 
 db_commands = Blueprint("db-custom", __name__)
 
@@ -8,6 +9,13 @@ def drop_db():
     db.drop_all()
     db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
     print("Tables deleted")
+
+@db_commands.cli.command("dump")
+def dump_db():
+    print("Dumping all database in database_dump file")
+    os.system("pg_dump -U postgres -W -d shopify_extension > ./database_dump.sql")
+    print("Dumped all database in database_dump file")
+    
 
 @db_commands.cli.command("seed")
 def seed_db():

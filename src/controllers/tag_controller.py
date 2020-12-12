@@ -59,24 +59,32 @@ def new_tag_customer(customer_id, tag_id):
 @tag.route("/<int:tag_id>", methods=["GET"])
 @jwt_required
 def get_tag(tag_id):
+    # get tag for user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
     
-    tag = Tag.query.filter_by(user_id = user.id).first()
+    tag = Tag.query.filter_by(user_id = user.id, id = tag_id).first()
+    
+    if not tag:
+        return abort(404, description="Tag not found.")
         
     return jsonify(tag_schema.dump(tag))
 
 @tag.route("/customer/<int:customer_id>", methods=["GET"])
 @jwt_required
 def get_tags_for_customer(customer_id):
+    # get tags for customer
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
     
     tags = db.session.query(Tag).filter(customers_tags.c.customer_id == customer_id).all()
+    
+    if tags == []:
+        return "No tags for this customer"
 
     return jsonify(tags_schema.dump(tags))
 
@@ -89,6 +97,9 @@ def get_all_tags_for_user():
         return abort(401, description="Invalid user")
     
     tags = Tag.query.filter_by(user_id = user.id).all()
+
+    if tags == []:
+        return "No tags for this user"
         
     return jsonify(tags_schema.dump(tags))
 
@@ -101,6 +112,9 @@ def delete_tag(tag_id):
         return abort(401, description="Invalid user")
     
     tag = Tag.query.filter_by(id = tag_id).first()
+
+    if not tag:
+        return abort(404, description="Tag not found.")
     
     db.session.delete(tag)
     db.session.commit()

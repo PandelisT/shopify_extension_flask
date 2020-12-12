@@ -7,6 +7,7 @@ from controllers.order_controller import order
 from controllers.product_controller import product
 from controllers.article_controller import article
 from controllers.address_controller import address
+from controllers.dump_controller import admin
 
 
 registerable_controllers = [
@@ -18,5 +19,6 @@ registerable_controllers = [
     order,
     product,
     article,
-    address
+    address,
+    admin
 ]
