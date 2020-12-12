@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 from sqlalchemy import text
 from datetime import timedelta
-from flask_alchemydumps import AlchemyDumps
+
 
 
 admin = Blueprint("admin", __name__, url_prefix="/admin/dump")
