@@ -24,6 +24,7 @@ address = Blueprint("address", __name__, url_prefix="/address")
 @address.route("/customer/<int:customer_id>", methods=["POST"])
 @jwt_required
 def new_address_for_customer(customer_id):
+    # Add new address for customer
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -31,22 +32,26 @@ def new_address_for_customer(customer_id):
     
     address_fields = address_schema.load(request.json)
     
-    new_address = Address()
-    new_address.number = address_fields["number"]
-    new_address.postcode = address_fields["postcode"]
-    new_address.street = address_fields["street"]
-    new_address.suburb = address_fields["suburb"]
-    new_address.state = address_fields["state"]
-    new_address.customer_id = customer_id
-    new_address.user_id = user.id
+    try: 
+        new_address = Address()
+        new_address.number = address_fields["number"]
+        new_address.postcode = address_fields["postcode"]
+        new_address.street = address_fields["street"]
+        new_address.suburb = address_fields["suburb"]
+        new_address.state = address_fields["state"]
+        new_address.customer_id = customer_id
+        new_address.user_id = user.id
 
-    customer = Customer.query.filter_by(customer_of = user.id, id = customer_id).first()
-    customer.address=new_address
+        customer = Customer.query.filter_by(customer_of = user.id, id = customer_id).first()
+        customer.address=new_address
 
-    db.session.add(new_address)
-    db.session.commit()
-        
-    return jsonify(address_schema.dump(new_address))
+        db.session.add(new_address)
+        db.session.commit()
+            
+        return jsonify(address_schema.dump(new_address))
+    
+    except:
+        return abort (400, "You missed one or more fields")
 
 @address.route("/<int:address_id>", methods=["GET"])
 @jwt_required
@@ -57,6 +62,9 @@ def get_address(address_id):
         return abort(401, description="Invalid user")
 
     address = Address.query.filter_by(id = address_id).first()
+
+    if not address:
+        return abort(401, description="Invalid address")
 
     return jsonify(address_schema.dump(address))
 
@@ -69,6 +77,9 @@ def delete_address(address_id):
         return abort(401, description="Invalid user")
     
     address = Address.query.filter_by(id = address_id).first()
+
+    if not address:
+        return abort(401, description="Invalid address")
 
     db.session.delete(address)
     db.session.commit()

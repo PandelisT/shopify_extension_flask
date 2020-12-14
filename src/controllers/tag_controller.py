@@ -49,6 +49,10 @@ def new_tag_customer(customer_id, tag_id):
     
     customer = Customer.query.filter_by(customer_of=user.id, id = customer_id).first()
     tag = Tag.query.filter_by(id = tag_id).first()
+
+    if not customer or not tag:
+        return abort(401, "No customer or tag")
+        
     customer.tags.append(tag)
         
     db.session.add(tag)
@@ -91,6 +95,7 @@ def get_tags_for_customer(customer_id):
 @tag.route("/", methods=["GET"])
 @jwt_required
 def get_all_tags_for_user():
+    # Gets all tags for a user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -106,6 +111,7 @@ def get_all_tags_for_user():
 @tag.route("/<int:tag_id>", methods=["DELETE"])
 @jwt_required
 def delete_tag(tag_id):
+    # Deletes a tag
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -124,14 +130,19 @@ def delete_tag(tag_id):
 @tag.route("/<int:tag_id>", methods=["PUT"])
 @jwt_required
 def update_tag(tag_id):
+    # Updates a user's tag
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
     
     tag_fields = tag_schema.load(request.json)
-    
     tag = Tag.query.filter_by(id = tag_id)
+
+    if tag.count() != 1:
+        return abort(404, description="Tag not found.")
+
     tag.tag = tag_fields["tag"]
+    db.session.commit()
 
     return jsonify(tag_schema.dump(tag))

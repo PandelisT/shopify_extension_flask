@@ -66,6 +66,7 @@ def new_habit_customer(customer_id, habit_id):
 @habit.route("/", methods=["GET"])
 @jwt_required
 def get_habits():
+    # Gets all habits for user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -82,6 +83,7 @@ def get_habits():
 @habit.route("/customer/<int:customer_id>", methods=["GET"])
 @jwt_required
 def get_habits_for_customer(customer_id):
+    # Gets all habits for customer of user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -98,6 +100,7 @@ def get_habits_for_customer(customer_id):
 @habit.route("/<int:habit_id>", methods=["DELETE"])
 @jwt_required
 def delete_habit(habit_id):
+    # Deletes habit for user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -116,6 +119,7 @@ def delete_habit(habit_id):
 @habit.route("/<int:habit_id>", methods=["PUT"])
 @jwt_required
 def update_habit(habit_id):
+    # Updates a habit for user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -124,7 +128,6 @@ def update_habit(habit_id):
     habit_fields = habit_schema.load(request.json)
     
     habit = Habit.query.filter_by(id = habit_id)
-    print(habit)
 
     if habit.count() != 1:
         return abort(404, description="Habit not found.")

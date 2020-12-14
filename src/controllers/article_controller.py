@@ -22,6 +22,7 @@ article = Blueprint("article", __name__, url_prefix="/article")
 @article.route("/", methods=["POST"])
 @jwt_required
 def new_article():
+    # Creates a new article for logged in user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -49,18 +50,23 @@ def new_article():
 @article.route("/<int:article_id>", methods=["GET"])
 @jwt_required
 def get_article(article_id):
+    # Gets an article for logged in user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
     
     article = Article.query.filter_by(id = article_id).first()
+    
+    if not article:
+        return abort(401, description="Invalid article") 
         
     return jsonify(article_schema.dump(article))
 
 @article.route("/<int:article_id>", methods=["PUT"])
 @jwt_required
 def update_article(article_id):
+    # Updates an article for logged in user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -69,6 +75,10 @@ def update_article(article_id):
     article_fields = article_schema.load(request.json)
     
     article = Article.query.filter_by(id = article_id)
+    
+    if article.count() != 1:
+        return abort(404, description="Article not found.")
+    
     article.title = article_fields["title"]
     article.body_html = article_fields["body_html"]
     article.summary = article_fields["summary"]
@@ -86,7 +96,7 @@ def update_article(article_id):
 @article.route("/product/<int:product_id>/article_id/<int:article_id>", methods=["POST"])
 @jwt_required
 def new_article_product(product_id, article_id):
-    # Adds a product to a article
+    # Adds a product to a article of the user logged in
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -105,12 +115,16 @@ def new_article_product(product_id, article_id):
 @article.route("/<int:article_id>", methods=["DELETE"])
 @jwt_required
 def delete_article(article_id):
+    # Deletes an article for logged in user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
     
     article = Article.query.filter_by(id = article_id).first()
+    
+    if not article:
+        return abort(401, description="Invalid article")
 
     db.session.delete(article)
     db.session.commit()
