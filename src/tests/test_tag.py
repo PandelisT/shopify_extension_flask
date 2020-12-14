@@ -2,6 +2,7 @@ import unittest
 from main import create_app, db
 from models.User import User
 from models.Note import Note
+from models.Customer import Customer
 from flask_jwt_extended import create_access_token
 import random
 

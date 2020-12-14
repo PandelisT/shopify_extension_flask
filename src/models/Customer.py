@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 from models.CustomersHabits import customers_habits
 from models.CustomersTags import customers_tags
-
+from models.Address import Address
 
 class Customer(db.Model):
     __tablename__ = "customers"
