@@ -2,6 +2,7 @@ from main import ma
 from models.Customer import Customer
 from marshmallow.validate import Length, Email
 
+
 class CustomerSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Customer
@@ -12,6 +13,7 @@ class CustomerSchema(ma.SQLAlchemyAutoSchema):
     notes = ma.Nested("NoteSchema", many=True)
     orders = ma.Nested("OrderSchema", many=True)
     address = ma.Nested("AddressSchema")
+
 
 customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)

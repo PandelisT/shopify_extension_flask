@@ -1,8 +1,6 @@
 import unittest
 from main import create_app, db
-from models.User import User
-from flask_jwt_extended import create_access_token
-import random
+
 
 class TestAuth(unittest.TestCase):
     @classmethod
@@ -25,9 +23,8 @@ class TestAuth(unittest.TestCase):
         print("teardown ran")
 
     def test_user_register(self):
-        response = self.client.post("/auth/register", 
-        json = {                                                        
-            "email": "test6@test.com",
-            "password": "123456"
-        })
+        response = self.client.post("/auth/register",
+                                    json={"email": "test6@test.com",
+                                          "password": "123456"})
+
         self.assertEqual(response.status_code, 200)

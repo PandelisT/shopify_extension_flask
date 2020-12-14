@@ -5,6 +5,7 @@ from models.Note import Note
 from flask_jwt_extended import create_access_token
 import random
 
+
 class TestAuth(unittest.TestCase):
     @classmethod
     def setUp(cls):
@@ -29,7 +30,9 @@ class TestAuth(unittest.TestCase):
         tag = random.choice(Note.query.all())
         user = User.query.get(tag.user_id)
         access_token = create_access_token(identity=str(user.id))
-        response = self.client.get("/tag/", headers={ "Authorization": f"Bearer {access_token}"})
+        response = self.client.get("/tag/",
+                                   headers={"Authorization":
+                                            f"Bearer {access_token}"})
         data = response.get_json()
 
         self.assertEqual(response.status_code, 200)
@@ -38,7 +41,8 @@ class TestAuth(unittest.TestCase):
     def test_tag_post(self):
         user = random.choice(User.query.all())
         access_token = create_access_token(identity=str(user.id))
-        response = self.client.post("/tag/", json={"tag": "test tag"}, headers={ "Authorization": f"Bearer {access_token}"})
-        data = response.get_json()
+        response = self.client.post("/tag/", json={"tag": "test tag"},
+                                    headers={"Authorization":
+                                             f"Bearer {access_token}"})
 
         self.assertEqual(response.status_code, 200)

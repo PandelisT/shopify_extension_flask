@@ -1,120 +1,753 @@
-openapi: 3.0.0
 info:
-  description: This is an API for the project on GitHub https://github.com/PandelisT/my-mood-diary.
-  version: "1.0.0"
-  title: Python CRM App
-  contact:
-    email: pandeli@nerdypandy.com
-  license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-tags:
-  - name: user
-    description: Routes for authentication
-
+  description: A REST API to extend some of Shopify's features.
+  title: Shopify Extension
+  version: API version 1
 paths:
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      responses:
-        default:
-          description: successful operation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Created user object
-        required: true
-  /user/login:
-    get:
-      tags:
-        - user
-      summary: Logs user into the system
-      operationId: loginUser
+    delete:
+      consumes:
+        - application/json
       parameters:
-        - name: username
-          in: query
-          description: The user name for login
+        - description: ''
+          in: header
+          name: Content-Type
           required: true
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
           required: true
-          schema:
-            type: string
+          type: string
       responses:
         '200':
           description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
-          content:
-            application/json:
-              schema:
-                type: string
-            application/xml:
-              schema:
-                type: string
-        '400':
-          description: Invalid username/password supplied
-  /user/:
-    put:
+      summary: Delete address
       tags:
-        - user
-      summary: Updated user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
+        - Address
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
       responses:
-        '400':
-          description: Invalid user supplied
-        '404':
-          description: User not found
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Updated user object
-        required: true
+        '200':
+          description: successful operation
+      summary: Get address
+      tags:
+        - Address
+  'http://127.0.0.1:5000/article/2':
     delete:
-      tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
       responses:
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
-          
-
-components:
-  schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        email:
+        '200':
+          description: successful operation
+      summary: Delete article
+      tags:
+        - Articles
+  'http://127.0.0.1:5000/article/3':
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
           type: string
-        password:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
           type: string
-      xml:
-        name: User
+      responses:
+        '200':
+          description: successful operation
+      summary: Get article
+      tags:
+        - Articles
+    put:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: update article
+      tags:
+        - Articles
+  'http://127.0.0.1:5000/article/product/2/article_id/5':
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: New article for product
+      tags:
+        - Product
+  'http://127.0.0.1:5000/auth/login':
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Login User
+      tags:
+        - Auth
+  'http://127.0.0.1:5000/customer/':
+    get:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get all Customers
+      tags:
+        - Customer
+  'http://127.0.0.1:5000/customer/1':
+    get:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get Customers for user
+      tags:
+        - Customer
+    put:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: ''
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Update Customer
+      tags:
+        - Customer
+  'http://127.0.0.1:5000/customer/2':
+    delete:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Delete Customer for user
+      tags:
+        - Customer
+  'http://127.0.0.1:5000/habit/':
+    get:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get Habits
+      tags:
+        - Habits
+  'http://127.0.0.1:5000/habit/4':
+    put:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Update habit
+      tags:
+        - Habits
+  'http://127.0.0.1:5000/habit/customer/1':
+    get:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get Habits for customers
+      tags:
+        - Habits
+  'http://127.0.0.1:5000/habit/customer/1/habit/1':
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: New habit for customer
+      tags:
+        - Habits
+  'http://127.0.0.1:5000/note/':
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get all note
+      tags:
+        - Notes
+  'http://127.0.0.1:5000/note/1':
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get note w/o customer id
+      tags:
+        - Notes
+    put:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Update note
+      tags:
+        - Notes
+  'http://127.0.0.1:5000/note/2':
+    delete:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Delete note
+      tags:
+        - Notes
+  'http://127.0.0.1:5000/note/customer/1':
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get note
+      tags:
+        - Notes
+  'http://127.0.0.1:5000/order/':
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get orders
+      tags:
+        - Orders
+  'http://127.0.0.1:5000/order/1':
+    delete:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Delete order
+      tags:
+        - Orders
+  'http://127.0.0.1:5000/order/customer/1':
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: New Order
+      tags:
+        - Orders
+  'http://127.0.0.1:5000/product/':
+    get:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get all products
+      tags:
+        - Product
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Add product
+      tags:
+        - Product
+  'http://127.0.0.1:5000/product/2/order/1':
+    delete:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Delete product from order
+      tags:
+        - Product
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Add product to order
+      tags:
+        - Product
+  'http://127.0.0.1:5000/product/3':
+    delete:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Delete product
+      tags:
+        - Product
+    get:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get Product by id
+      tags:
+        - Product
+  'http://127.0.0.1:5000/product/no_of_articles/2':
+    put:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Update product number of articles
+      tags:
+        - Product
+  'http://127.0.0.1:5000/product/product_date':
+    get:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: ' Get all products by date desc'
+      tags:
+        - Product
+  'http://127.0.0.1:5000/product/product_price_information':
+    get:
+      parameters:
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get max price of products
+      tags:
+        - Product
+  'http://127.0.0.1:5000/tag/':
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get tags
+      tags:
+        - Tags
+  'http://127.0.0.1:5000/tag/1':
+    delete:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Delete tag
+      tags:
+        - Tags
+  'http://127.0.0.1:5000/tag/{tag_id}':
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get tag
+      tags:
+        - Tags
+    put:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Update tag
+      tags:
+        - Tags
+  'http://127.0.0.1:5000/tag/customer/1':
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: Get tag for customer
+      tags:
+        - Tags
+  'http://127.0.0.1:5000/tag/customer/1/tag_id/5':
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: ''
+          in: header
+          name: Authorization
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+      summary: New tag for customer
+      tags:
+        - Tags
+schemes:
+  - HTTP protocol
+swagger: '2.0'
+tags:
+  - description: ''
+    name: Orders
+  - description: ''
+    name: Tags
+  - description: ''
+    name: Notes
+  - description: ''
+    name: Customer
+  - description: ''
+    name: Address
+  - description: ''
+    name: Habits
+  - description: ''
+    name: Auth
+  - description: ''
+    name: Articles
+  - description: ''
+    name: Product
+  - description: ''
+    name: Shopify Extension

@@ -5,6 +5,7 @@ from models.Habit import Habit
 from flask_jwt_extended import create_access_token
 import random
 
+
 class TestHabit(unittest.TestCase):
     @classmethod
     def setUp(cls):
@@ -30,7 +31,9 @@ class TestHabit(unittest.TestCase):
         user = User.query.get(habit.user_id)
         access_token = create_access_token(identity=str(user.id))
 
-        response = self.client.get("/habit/", headers={ "Authorization": f"Bearer {access_token}"})
+        response = self.client.get("/habit/",
+                                   headers={"Authorization":
+                                            f"Bearer {access_token}"})
         data = response.get_json()
 
         self.assertEqual(response.status_code, 200)
@@ -39,7 +42,8 @@ class TestHabit(unittest.TestCase):
     def test_habit_post(self):
         user = random.choice(User.query.all())
         access_token = create_access_token(identity=str(user.id))
-        response = self.client.post("/habit/", json={"habit": "test habit"}, headers={ "Authorization": f"Bearer {access_token}"})
-        data = response.get_json()
+        response = self.client.post("/habit/", json={"habit": "test habit"},
+                                    headers={"Authorization":
+                                    f"Bearer {access_token}"})
 
         self.assertEqual(response.status_code, 200)
