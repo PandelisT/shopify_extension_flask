@@ -34,7 +34,7 @@ Install modules from requirements.txt: ```pip install -r requirements.txt```
 
 ```flask db-custom seed``` (to seed the database)
 
-```flask db-custom dump``` (to dump the database into the database_dump.sql file)
+```flask db-custom dump``` (to dump the database into the database_dump.sql file. The user must be 'postgres' for this to work)
 
 Note: seeding includes populating these tables:
 

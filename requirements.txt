@@ -5,6 +5,7 @@ botocore==1.19.18
 cffi==1.14.3
 click==7.1.2
 Faker==4.14.2
+flake8==3.8.4
 Flask==1.1.2
 Flask-Bcrypt==0.7.1
 Flask-JWT-Extended==3.25.0
@@ -18,10 +19,14 @@ Mako==1.1.3
 MarkupSafe==1.1.1
 marshmallow==3.8.0
 marshmallow-sqlalchemy==0.23.1
+mccabe==0.6.1
 psycopg2-binary==2.8.6
+pycodestyle==2.6.0
 pycparser==2.20
+pyflakes==2.2.0
 PyJWT==1.7.1
 python-dateutil==2.8.1
+python-decouple==3.3
 python-dotenv==0.15.0
 python-editor==1.0.4
 s3transfer==0.3.3
