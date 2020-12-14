@@ -67,8 +67,8 @@ def delete_product_from_order(product_id, order_id):
     if not user:
         return abort(401, description="Invalid user")
 
-    product = Product.query.filter_by(id = product_id).first()
-    order = Order.query.filter_by(id = order_id).first()
+    product = Product.query.filter_by(id=product_id).first()
+    order = Order.query.filter_by(id=order_id).first()
 
     if not product or not order:
         return abort(403, description="Incorrect product or order")
@@ -76,7 +76,8 @@ def delete_product_from_order(product_id, order_id):
     db.session.delete(product)
     db.session.commit()
 
-    return jsonify("The following product was deleted from the order specified", product_schema.dump(product))
+    return jsonify("The following product was deleted from the order",
+                   product_schema.dump(product))
 
 
 @product.route("/no_of_articles/<int:product_id>", methods=["PUT"])
@@ -88,11 +89,13 @@ def update_product_article_number(product_id):
     if not user:
         return abort(401, description="Invalid user")
 
-    update_product = Product.query.filter_by(id = product_id).first()
-    update_product.no_of_articles = db.session.query(db.Model.metadata.tables['products_articles']).filter(product_id == product_id).count()
+    update_product = Product.query.filter_by(id=product_id).first()
+    update_product.no_of_articles = db.session.query(
+        db.Model.metadata.tables['products_articles']).filter(
+            product_id == product_id).count()
 
     db.session.commit()
-  
+
     return jsonify(update_product.no_of_articles)
 
 
@@ -105,13 +108,14 @@ def update_product(product_id):
         return abort(401, description="Invalid user")
 
     product_fields = product_schema.load(request.json)
-    update_product = Product.query.filter_by(id = product_id)
+    update_product = Product.query.filter_by(id=product_id)
     update_product.title = product_fields["title"]
     update_product.description = product_fields["description"]
     update_product.quantity = product_fields["quantity"]
     update_product.price = product_fields["price"]
     update_product.update(product_fields)
     db.session.commit()
+
     return jsonify(product_schema.dump(update_product))
 
 
@@ -123,7 +127,7 @@ def get_product(product_id):
     if not user:
         return abort(401, description="Invalid user")
 
-    product = Product.query.filter_by(id = product_id).first()
+    product = Product.query.filter_by(id=product_id).first()
 
     return jsonify(product_schema.dump(product))
 
@@ -136,7 +140,7 @@ def get_all_products():
     if not user:
         return abort(401, description="Invalid user")
 
-    products = Product.query.filter_by(user_id = user.id).all()
+    products = Product.query.filter_by(user_id=user.id).all()
 
     return jsonify(products_schema.dump(products))
 
@@ -149,7 +153,8 @@ def get_all_products_by_date():
     if not user:
         return abort(401, description="Invalid user")
 
-    products = Product.query.filter_by(user_id = user.id).order_by(Product.created_on.desc()).all()
+    products = Product.query.filter_by(user_id=user.id).order_by(
+        Product.created_on.desc()).all()
 
     return jsonify(products_schema.dump(products))
 
@@ -162,7 +167,8 @@ def get_total_products_price():
     if not user:
         return abort(401, description="Invalid user")
 
-    products = db.session.query(Product, Product.price, Product.id).group_by(Product.id).all() 
+    products = db.session.query(Product, Product.price, Product.id).group_by(
+        Product.id).all()
 
     sum = 0
     for product in products:
@@ -179,12 +185,15 @@ def get_product_price_information():
     if not user:
         return abort(401, description="Invalid user")
 
-    max_price_of_product = db.session.query(func.max(Product.price)).scalar()
-    average_price_of_product = round(db.session.query(func.avg(Product.price)).scalar())
-    sum_price_of_product = db.session.query(func.sum(Product.price)).scalar()
+    max_price_of_product = db.session.query(
+        func.max(Product.price)).scalar()
+    avg_price_of_product = round(db.session.query(
+        func.avg(Product.price)).scalar())
+    sum_price_of_product = db.session.query(
+        func.sum(Product.price)).scalar()
 
     return jsonify({"Maximum price of all products is": max_price_of_product,
-                    "Average price of all products is": average_price_of_product,
+                    "Average price of all products is": avg_price_of_product,
                     "Sum of all products prices is": sum_price_of_product})
 
 
@@ -196,8 +205,9 @@ def delete_product(product_id):
     if not user:
         return abort(401, description="Invalid user")
 
-    product = Product.query.filter_by(id = product_id).first()
+    product = Product.query.filter_by(id=product_id).first()
     db.session.delete(product)
     db.session.commit()
 
-    return jsonify("The following product was deleted from the database.", product_schema.dump(product))
+    return jsonify("The following product was deleted from the database.",
+                   product_schema.dump(product))

@@ -1,19 +1,12 @@
 from flask import Blueprint, abort, jsonify, request
-from schemas.UserSchema import user_schema
-from schemas.OrderSchema import order_schema, orders_schema
-from schemas.ProductSchema import product_schema, products_schema
-from schemas.ArticleSchema import article_schema, articles_schema
+from schemas.ProductSchema import product_schema
+from schemas.ArticleSchema import article_schema
 from models.User import User
-from models.Customer import Customer
-from models.Order import Order
 from models.Product import Product
 from models.Article import Article
-from main import db, bcrypt
-from flask_jwt_extended import create_access_token
+from main import db
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
-from datetime import timedelta
-from sqlalchemy import text
 
 
 article = Blueprint("article", __name__, url_prefix="/article")
@@ -27,9 +20,9 @@ def new_article():
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
-    
+
     article_fields = article_schema.load(request.json)
-    
+
     new_article = Article()
     new_article.title = article_fields["title"]
     new_article.body_html = article_fields["body_html"]
@@ -40,10 +33,9 @@ def new_article():
     new_article.show_summary = article_fields["show_summary"]
 
     user.article_id.append(new_article)
-
     db.session.add(new_article)
     db.session.commit()
-        
+
     return jsonify(article_schema.dump(new_article))
 
 
@@ -55,13 +47,14 @@ def get_article(article_id):
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
-    
-    article = Article.query.filter_by(id = article_id).first()
-    
+
+    article = Article.query.filter_by(id=article_id).first()
+
     if not article:
-        return abort(401, description="Invalid article") 
-        
+        return abort(401, description="Invalid article")
+
     return jsonify(article_schema.dump(article))
+
 
 @article.route("/<int:article_id>", methods=["PUT"])
 @jwt_required
@@ -71,14 +64,13 @@ def update_article(article_id):
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
-    
+
     article_fields = article_schema.load(request.json)
-    
-    article = Article.query.filter_by(id = article_id)
-    
+    article = Article.query.filter_by(id=article_id)
+
     if article.count() != 1:
         return abort(404, description="Article not found.")
-    
+
     article.title = article_fields["title"]
     article.body_html = article_fields["body_html"]
     article.summary = article_fields["summary"]
@@ -89,11 +81,12 @@ def update_article(article_id):
 
     article.update(article_fields)
     db.session.commit()
-        
+
     return jsonify(article_schema.dump(article))
 
 
-@article.route("/product/<int:product_id>/article_id/<int:article_id>", methods=["POST"])
+@article.route("/product/<int:product_id>/article_id/<int:article_id>",
+               methods=["POST"])
 @jwt_required
 def new_article_product(product_id, article_id):
     # Adds a product to a article of the user logged in
@@ -101,14 +94,13 @@ def new_article_product(product_id, article_id):
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
-    
-    product = Product.query.filter_by(id = product_id).first()
-    article = Article.query.filter_by(id = article_id).first()
+
+    product = Product.query.filter_by(id=product_id).first()
+    article = Article.query.filter_by(id=article_id).first()
     article.articles.append(product)
-        
     db.session.add(product)
     db.session.commit()
-        
+
     return jsonify(product_schema.dump(product))
 
 
@@ -120,13 +112,14 @@ def delete_article(article_id):
     user = User.query.get(user_id)
     if not user:
         return abort(401, description="Invalid user")
-    
-    article = Article.query.filter_by(id = article_id).first()
-    
+
+    article = Article.query.filter_by(id=article_id).first()
+
     if not article:
         return abort(401, description="Invalid article")
 
     db.session.delete(article)
     db.session.commit()
 
-    return jsonify("The following article was deleted from the database.", article_schema.dump(article))
+    return jsonify("The following article was deleted from the database.",
+                   article_schema.dump(article))
