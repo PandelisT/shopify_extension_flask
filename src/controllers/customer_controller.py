@@ -1,10 +1,13 @@
-from flask import Blueprint, abort, jsonify, request
-from schemas.CustomerSchema import customer_schema, customers_schema
+from flask import Blueprint, abort, jsonify, request, render_template, redirect
+from schemas.CustomerSchema import CustomerSchema, customer_schema, customers_schema
+from schemas.UserSchema import UserSchema
 from models.Customer import Customer
 from models.User import User
 from main import db
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import get_jwt_identity
+import flask_jwt_extended
+from flask_jwt_extended import get_jwt_identity, create_access_token
+from datetime import datetime
 
 
 customer = Blueprint("customer", __name__, url_prefix="/customer")
@@ -36,10 +39,9 @@ def new_customer():
     except Exception:
         return abort(400, "You missed one or more fields")
 
-
 @customer.route("/", methods=["GET"])
 @jwt_required
-def get_customers_for_user():
+def get_all_customers_for_user_api():
     # Get all customers for logged in user
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
@@ -54,6 +56,50 @@ def get_customers_for_user():
 
     return jsonify(customers_schema.dump(all_customers))
 
+@customer.route("/user/<int:user_id>", methods=["GET"])
+@jwt_required
+def get_customers_for_user(user_id):
+    # Get all customers for logged in user and renders on index.html page
+    jwt_user = get_jwt_identity()
+    user = User.query.get(jwt_user)
+    if not user:
+        return abort(401, description="Invalid user")
+
+    user_dump = UserSchema().dump(user)
+
+    all_customers = Customer.query.all()
+    customer_dump = CustomerSchema(many=True).dump(all_customers)
+
+    logged_in_user = flask_jwt_extended.get_jwt_identity()
+
+    if logged_in_user == user.id:
+        return render_template("index.html", customers=customer_dump, user=user_dump, auth=True)
+
+    return render_template('index.html', customers=customer_dump)
+
+@customer.route("/user/<int:user_id>", methods=["POST"])
+@jwt_required
+def new_customers_for_user(user_id):
+    # Add customer on index.html
+    jwt_id = get_jwt_identity()
+    user = User.query.get(jwt_id)
+    if not user:
+        return abort(401, description="Invalid user")
+    
+    logged_in_user = flask_jwt_extended.get_jwt_identity()
+
+    access_token = create_access_token(identity=str(user.id))
+
+    if logged_in_user == user.id:
+        data = request.form.to_dict()
+        customer_fields = CustomerSchema().load(data)
+        new_customer = Customer(fname=customer_fields["fname"], lname=customer_fields["lname"], is_active=customer_fields["is_active"], email=customer_fields["email"], customer_of=user.id,
+        headers={"Authorization": f"Bearer {access_token}"})
+        
+        db.session.add(new_customer)
+        db.session.commit()
+
+    return redirect(f"customer/user/{user_id}", code=302)
 
 @customer.route("/<int:customer_id>", methods=["GET"])
 @jwt_required

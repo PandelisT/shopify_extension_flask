@@ -1,35 +1,17 @@
-{% extends 'base.html' %}
+{% extends "layout.html" %}
 
 {% block content %}
-<div>
-  <h1>Flask CRUD</h1>
-  {% if customers|length < 1 %}
-  <p>There are currently no customers.</p>
-  {% else %}
-  <table>
-    <thead>
-      <tr>
-        <th>Customer Name</th>
-        <th>Added</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for customer in customers %}
-      <tr>
-        <td><a href="">{{ customer.lname }}</a></td>
-        <td>{{ customer.created_at.date() }}</td>
-        <td><a href="">Delete</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% endif %}
-
-  <form action="/" method="POST">
-    <label for="newStuff">New Stuff:</label>
-    <input type="text" name="name" id="newStuff">
-    <button type="submit">Add</button>
-  </form>
-</div>
-{% endblock content %}
+    {% for customer in customers %}
+    <div class="col px-md-5"><div class="p-3 border bg-light">
+                <div class="card" >
+                    <div class="card-body">
+                        <h5 class="card-title">{{customer.fname}} {{customer.lname}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted"> Added on: {{customer.created_on}}</h6>
+                        <p class="card-text">{{customer.address}}</p>
+                        <a href="#" class="card-link">{{customer.email}}</a>
+                    </div>
+                </div>
+            </div>
+    </div>
+    {% endfor %}
+{% endblock %}

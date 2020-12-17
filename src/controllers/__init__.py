@@ -9,6 +9,7 @@ from controllers.article_controller import article
 from controllers.address_controller import address
 
 
+
 registerable_controllers = [
     auth,
     customer,

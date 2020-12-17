@@ -43,7 +43,7 @@ paths:
       summary: Get address
       tags:
         - Address
-  'http://127.0.0.1:5000/article/2':
+/article/{article_id}:
     delete:
       consumes:
         - application/json
