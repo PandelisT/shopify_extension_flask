@@ -6,8 +6,9 @@
                 <div class="card" >
                     <div class="card-body">
                         <h5 class="card-title">{{customer.fname}} {{customer.lname}}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted"> Added on: {{customer.created_on}}</h6>
-                        <p class="card-text">{{customer.address}}</p>
+                        <h6 class="card-subtitle mb-2 text-muted"> Added on: {{customer.created_on|datetimeformat}}</h6>
+                        <p class="card-text"> Address: {{customer.address.number}} {{customer.address.street}} {{customer.address.suburb}}</p>
+                        <p class="card-text"> State and Postcode: {{customer.address.state}}  {{customer.address.postcode}}</p>
                         <a href="#" class="card-link">{{customer.email}}</a>
                     </div>
                 </div>

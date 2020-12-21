@@ -38,4 +38,8 @@ def create_app():
     def handle_bad_request(error):
         return (jsonify(error.messages), 400)
 
+    @app.template_filter('datetimeformat')
+    def datetimeformat(value, format='%Y-%m-%d'):
+        return value.strftime(format)
+
     return app

@@ -36,6 +36,8 @@ Install modules from requirements.txt: ```pip install -r requirements.txt```
 
 ```flask db-custom dump``` (to dump the database into the database_dump.sql file. The user must be 'postgres' for this to work)
 
+Dumping all the data can also be achieved by running this endpoint:```customer/dump``` with the token for the specific user. 
+
 Note: seeding includes populating these tables:
 
 1. Users (for simplicity populated with 1 user which will have many customers, products, habits, tags, orders and notes for customers),
@@ -57,3 +59,17 @@ Habits and tags also need to be associated with specific customers with the endp
 ```/habit/customer/{customer_id}/habit/{habit_id}```
 
 The full list of API endpoints can be found in the swagger.yml file.
+
+The front end consists of only one end point ```/customer/user/1``` which show a list of customers.
+
+To connect to the database locally, please fill in the .env file like this example:
+FLASK_APP=src/main.py
+FLASK_ENV=development
+DB_USER = postgres
+DB_PASSWORD = postgres
+DB_HOST = localhost:5432
+DB_NAME = shopify_extension
+JWT_SECRET_KEY = "duck"
+AWS_ACCESS_KEY_ID=1
+AWS_SECRET_ACCESS_KEY=1
+AWS_S3_BUCKET=1

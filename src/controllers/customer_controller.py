@@ -1,6 +1,13 @@
 from flask import Blueprint, abort, jsonify, request, render_template, redirect
 from schemas.CustomerSchema import CustomerSchema, customer_schema, customers_schema
-from schemas.UserSchema import UserSchema
+from schemas.UserSchema import UserSchema, users_schema, user_schema
+from schemas.AddressSchema import address_schema
+from schemas.ArticleSchema import articles_schema
+from schemas.HabitSchema import habits_schema
+from schemas.NoteSchema import notes_schema
+from schemas.OrderSchema import orders_schema
+from schemas.ProductSchema import products_schema
+from schemas.TagSchema import tags_schema
 from models.Customer import Customer
 from models.User import User
 from main import db
@@ -8,6 +15,7 @@ from flask_jwt_extended import jwt_required
 import flask_jwt_extended
 from flask_jwt_extended import get_jwt_identity, create_access_token
 from datetime import datetime
+import json
 
 
 customer = Blueprint("customer", __name__, url_prefix="/customer")
@@ -55,6 +63,31 @@ def get_all_customers_for_user_api():
         return abort(401, description="No customers for user")
 
     return jsonify(customers_schema.dump(all_customers))
+
+
+@customer.route("/dump", methods=["GET"])
+@jwt_required
+def dump_all_customers_info_for_user():
+    # Get all customers for logged in user
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="Invalid user")
+
+    all_tables = ["addresses", "articles", "customers", "habits", "notes", "orders", "products", "tags", "users"]
+    schemas = [address_schema, articles_schema, customers_schema, habits_schema, notes_schema, orders_schema, products_schema, tags_schema, users_schema ]
+    i = 0
+    for table in all_tables:
+        query = db.engine.execute(f'SELECT * FROM {table}')
+        data = ((schemas[i]).dump(query))
+        data = json.dumps(data)
+        i+=1
+    
+        file = open("src/dump/dump.json", "a")
+        file.write(data)
+        file.close()
+
+    return "All table data dumped to src/dump/dump.json"
 
 @customer.route("/user/<int:user_id>", methods=["GET"])
 @jwt_required
@@ -165,3 +198,6 @@ def update_customer(customer_id):
     db.session.commit()
 
     return jsonify(customer_schema.dump(customer))
+
+
+
