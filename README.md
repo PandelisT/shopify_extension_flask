@@ -6,7 +6,9 @@ This Flask REST API is an extension to the SHopify REST API found here: https://
 
 The extension includes the addition of new tables and relationships including adding tags, habits and notes to customers and connecting products with blog posts.
 
-The endpoints for this project can be found in openapi.yml.
+The endpoints for this project can be found in swagger.yml.
+
+The GitHub repository for this can be found here: https://github.com/PandelisT/shopify_extension_flask
 
 ## Instructions
 
